@@ -1,0 +1,36 @@
+import { schedulesDay } from "./load.js"
+import { scheduleCancel } from "../../services/schedules-cancel.js"
+
+
+const periods = document.querySelectorAll(".period")
+
+//Gera evento click para cada lista (manha, tarde e noite)
+periods.forEach((period) => {
+    //Captura o evento de clique na lista
+    period.addEventListener("click", async (event) => {
+        if(event.target.classList.contains("cancel-icon")){
+            //Obtem a li pai do elemento clicado
+            const item = event.target.closest("li")
+           
+            //Pega o id do agendamento para remover
+            const { id } = item.dataset
+            
+            //Confirma que o ID foi selecionado
+            if (id){
+                //Confirma se usuario quer cancelar
+                const isConfirm = confirm(
+                    "Tem certeza que deseja cancelar o agendamento?"
+                )
+
+                if (isConfirm) {
+                    //Faz a requisição na API para cancelar
+                    await scheduleCancel({id})
+
+                    //Recarrega os agendamentos
+                    schedulesDay()
+                }
+            }
+
+        }
+    })
+})
